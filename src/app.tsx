@@ -51,6 +51,7 @@ let peer: Peer;
 
 export function App() {
   const [loading, setLoading] = useState(false);
+  const [initial, setInitial] = useState(false);
 
   const [myInfo, setMyInfo] = useState<Person>(InitInfo);
   const myInfoRef = useRef(myInfo);
@@ -257,6 +258,7 @@ export function App() {
     peer.on('open', (id: string) => {
       const myInfo = myInfoRef.current ?? { id, nickName: getNickName() };
       setMyInfo(myInfo);
+      setInitial(true);
       localStorage.setItem(MY_INFO_CACHE_KEY, JSON.stringify(myInfo));
       peer?.on('connection', (connection) => {
         connection?.on('open', () => {
@@ -316,13 +318,15 @@ export function App() {
   }, []);
 
   useEffect(() => {
-    const hashId = location.hash.split('#')[1];
-    if (hashId && myInfo?.id !== hashId) {
-      connect(hashId);
-    } else {
-      location.hash = `#${myInfo.id}`;
+    if (initial) {
+      const hashId = location.hash.split('#')[1];
+      if (hashId && myInfoRef.current?.id !== hashId) {
+        connect(hashId);
+      } else {
+        location.hash = `#${myInfoRef.current?.id}`;
+      }
     }
-  }, [myInfo?.id, connect]);
+  }, [initial, connect]);
 
   useEffect(() => {
     const handle = () => {
