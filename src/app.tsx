@@ -174,7 +174,7 @@ export function App() {
       const friendId = id ?? inputRef.current?.value;
       if (friendId) {
         setLoading(true);
-        const connection = peer.connect(friendId);
+        const connection = peer.connect(friendId, {});
         connection?.on('open', () => {
           senderOpen(connection);
           connection.on('close', () => {
@@ -254,7 +254,15 @@ export function App() {
   };
 
   useEffect(() => {
-    peer = new Peer(myInfo?.id);
+    // /peer-practice/{xxx.xxx.xxx.xxx}:{yyyy}{/zzzz}
+    const [_, host, port, path] =
+      location.pathname.match(/(?<=\/)([\w\.]+):(\d+)(?=$|(\/\w+))/) ?? [];
+    console.log(host, port, path);
+    peer = new Peer(myInfo?.id, {
+      host,
+      port: Number(port),
+      path: path ?? '/',
+    });
     peer.on('open', (id: string) => {
       const myInfo = myInfoRef.current ?? { id, nickName: getNickName() };
       setMyInfo(myInfo);
