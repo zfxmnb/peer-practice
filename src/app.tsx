@@ -263,6 +263,9 @@ export function App() {
     host && (options.host = host);
     port && (options.port = Number(port));
     path && (options.path = path);
+    if (options.port && options.port !== 443) {
+      options.secure = false;
+    }
     peer = new Peer(myInfo?.id, options);
     peer.on('open', (id: string) => {
       const myInfo = myInfoRef.current ?? { id, nickName: getNickName() };
