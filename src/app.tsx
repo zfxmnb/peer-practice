@@ -322,9 +322,8 @@ export function App() {
       const hashId = location.hash.split('#')[1];
       if (hashId && myInfoRef.current?.id !== hashId) {
         connect(hashId);
-      } else {
-        location.hash = `#${myInfoRef.current?.id}`;
       }
+      location.hash = `#${myInfoRef.current?.id}`;
     }
   }, [initial, connect]);
 
