@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from 'preact/hooks';
-import { DataConnection, Peer } from 'peerjs';
+import { DataConnection, Peer, PeerOptions } from 'peerjs';
 import { v4 } from 'uuid';
 import getNickName from './utils/getNickName';
 
@@ -254,15 +254,16 @@ export function App() {
   };
 
   useEffect(() => {
-    // /peer-practice/{xxx.xxx.xxx.xxx}:{yyyy}{/zzzz}
-    const [_, host, port, path] =
-      location.pathname.match(/(?<=\/)([\w\.]+):(\d+)(?=$|(\/\w+))/) ?? [];
+    // /peer-practice/?server={xxx.xxx.xxx.xxx}:{yyyy}{/zzzz}
+    const search = new URLSearchParams(location.search);
+    const serverUrl = search.get('server');
+    const [_, host, port, path] = serverUrl?.match(/^([\w\.]+):(\d+)(?=$|(\/\w+$))/) ?? [];
     console.log(host, port, path);
-    peer = new Peer(myInfo?.id, {
-      host,
-      port: Number(port),
-      path: path ?? '/',
-    });
+    const options: PeerOptions = {};
+    host && (options.host = host);
+    port && (options.port = Number(port));
+    path && (options.path = path);
+    peer = new Peer(myInfo?.id, options);
     peer.on('open', (id: string) => {
       const myInfo = myInfoRef.current ?? { id, nickName: getNickName() };
       setMyInfo(myInfo);

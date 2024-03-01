@@ -10,8 +10,8 @@
 
 ### 结构
 
-/peer-practice/{host}:{port}{path}
+/peer-practice/?server={host}:{port}{path?}
 
 ### 例如
 
-/peer-practice/{xxx.xxx.xxx.xxx}:{yyyy}{/zzzz}
+/peer-practice/?server={xxx.xxx.xxx.xxx}:{yyyy}{/zzzz}
