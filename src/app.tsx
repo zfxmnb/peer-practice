@@ -168,7 +168,7 @@ export function App() {
     });
   }, []);
 
-  const connect = (id?: string) => {
+  const connect = useCallback((id?: string) => {
     if (peer) {
       const friendId = id ?? inputRef.current?.value;
       if (friendId) {
@@ -185,7 +185,7 @@ export function App() {
         });
       }
     }
-  };
+  }, []);
 
   const send = () => {
     const content = messageRef.current?.value?.trim();
@@ -314,6 +314,15 @@ export function App() {
       });
     });
   }, []);
+
+  useEffect(() => {
+    const hashId = location.hash.split('#')[1];
+    if (hashId && myInfo?.id !== hashId) {
+      connect(hashId);
+    } else {
+      location.hash = `#${myInfo.id}`;
+    }
+  }, [myInfo?.id, connect]);
 
   useEffect(() => {
     const handle = () => {
